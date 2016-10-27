@@ -1,0 +1,26 @@
+{
+  "sensors":
+  [
+
+    { "name" : "ch4",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "size": 8,
+      "ro" : 1,
+      "gamma": 1,
+      "analogpin": 4
+    }
+
+  ],
+  "params":{
+     "alpha" : 800,
+     "beta" : 1,
+     "lambda" : 0.005,
+      "D": 100000
+  },
+  "interval":{
+      "period_update" : 100,
+      "M": 1000,
+      "upload": 10
+  }
+}
