@@ -5,7 +5,7 @@ import sys
 ###@PI
 # from sensors.gps.gps import GPS
 
-USBi = 1
+USBi = 0
 while True:
     try:
         time.sleep(1)

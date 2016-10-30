@@ -2,12 +2,9 @@
 from __future__ import print_function
 from bitstruct import *
 import Queue
-
 import mqtt
 import cam
 import os
-from my_libs import eprint
-from my_libs import get_timestamp
 from my_libs import *
 from struct import *
 from socket import *
@@ -18,31 +15,28 @@ from circuits import Component, Debugger, handler, Event, Worker, task, Timer
 import time
 import datetime
 from sensors.arduino import read_arduino
+import paho.mqtt.publish as pub
+from socket import *
+from bitstruct import *
+import json
 
 
-############################################################################
-# Read from config #
-############################################################################
+
+# Timeouts and Intervals
+#------------------------
+TIMEOUT_MQTT_RETRY = 10
+CHECK_ALIVE_INTERVAL = 30
+STARTUP_INTERVAL = 4
+
+
+# Read from config
+#------------------
 try:
-	with open("sensor_config.json", 'r') as f:
-		c = json.load(f)
+    with open("sensor_config.json", 'r') as f:
+        s = json.load(f)
 except IOError:
-	print (IOError)
-	print ("Error reading from config file: using default configuration")
-###########################################################################
-
-
-#################
-# Setup Logging #
-#################
-setup_logging()
-log = logging.getLogger("<Dispatcher>")
-# logging.disable(logging.CRITICAL)          #uncomment this to disable all logging
-
-
-####################
-# Read from config #
-####################
+    print (IOError)
+    print(EventReport("Error", "Cannot read sensor_config.json.")
 try:
     with open('config/config.json', 'r') as f:
         config = json.load(f)
@@ -50,122 +44,188 @@ try:
     TX_MEDIUM = config['TX_MEDIUM']
     MQTT_BROKER_HOSTNAME = config['MQTT_BROKER_HOSTNAME']
     RUNTIME = config['RUNTIME']
+    print(EventReport("Debug", "Hostname " + str(MQTT_BROKER_HOSTNAME) + "connected")
 except:
-    print("Error reading from config file: using default configuration")
+    print(EventReport("Error", "Cannot read config/config.json.")
     SENSE_INTERVAL = 6
     TX_MEDIUM = "wlan0"  # wlan0 for WIFI, ppp0 for 3G
     MQTT_BROKER_HOSTNAME = "iot.eclipse.org"
     RUNTIME = 50
 
-CHECK_ALIVE_INTERVAL = 30
-STARTUP_INTERVAL = 4
 
-#####################################
-# Bandwidth Consumption Calculation #
-#####################################
+
+'''
+# size : how many bits
+# id : index of event in json
+# s : signed int
+# u : unsigned int
+# f : float
+'''
+d = {
+    "event":
+        [
+            {"name": "temperature",
+             "size": 8,
+             "dtype": 's',
+             "sensor": "dht11"             
+             },
+
+            {"name": "humidity",
+             "size": 8,
+             "dtype": 'u',
+              "sensor": "dht11"
+             },
+
+            {"name": "methane",
+             "size": 10,
+             "dtype": 'u',
+              "sensor": "mq4"
+             },
+
+            {"name": "lpg",
+             "size": 10,
+             "dtype": 'u',
+              "sensor": "mq6"
+             
+             },
+
+            {"name": "co2",
+             "size": 10,
+             "dtype": 'u',
+              "sensor": "mq135"
+             },
+
+            {"name": "dust",
+             "size": 10,
+             "dtype": 'u',
+             "sensor": "dust"
+             }
+        ]
+}
+sensor_conf = json.dumps(d)
+c = json.loads(sensor_conf)
+
+
+# Setup Logging
+#---------------
+setup_logging()
+log = logging.getLogger("<Dispatcher>")
+logging.disable(logging.CRITICAL)          #uncomment this to disable all logging
+
+
+# Bandwidth Consumption Calculation
+#-----------------------------------
 start_tx = 0
 act_payload = 0
 
 
-def sense_a_bundle():
-    """
-    Returns:
-        2 bundles of sensor data as array (dictionary)
-        1st one is Reading
-        2nd one is Raw Sensor Data
-    """
-    # packed = encode_structpack(data)
-    # packed2 = encode_structpack(data_raw)
-    # return packed, packed2
 
-
-#########################################
-# Different Encoding Schemes to Compare #
-#########################################
-def encode_structpack(data):
-    '''
-    Args:
-        data:
-        dictionary form data array
-    Returns:
-        36 bytes struct.pack
-    '''
-    packed = pack('ifffffffff', (data["time"]), (data["ch4"]), (data["lpg"]), (data["co2"]),
-                  (data["dust"]), (data["temp"]),
-                  (data["humidity"]), (data["lat"]), (data["long"]), data["cng"])
-    return packed
-
-
-def encode_json(data):
-    '''
-        Args:
-            data:
-            dictionary form data array
-        Returns:
-            162 bytes labelled data : JSON
-        '''
-    json_str = json.dumps(data)
-    # print("JSON LEN "+ str(len(json_str)))
-    # print(json_str)
-
-
-
-def struct_pack_format(NUM_DATA):
-    str = ""
-    str += "u4"*NUM_DATA
-    str += "u16u16"*NUM_DATA
-    return str
-
-def collect_and_encode_multiple():
-    mycopy = []
-
-
-    count_data = 0
+# Queue Related Functions 
+#-------------------------
+          
+def queue_print(q):
+    print "Printing start."
+    queue_copy = []
     while True:
         try:
-            elem = CircuitsApp.readings_queue.get(block=False)
+            elem = q.get(block=False)
         except:
             break
         else:
-            mycopy.append(elem)
-            count_data = count_data + 1
-    data = {}
-    for i in range(0, len(mycopy)):
-        data[i] = 0
-        
-    for i in range(0, len(mycopy)):
-        data[i] = (mycopy[i].value)
-    packed = pack(struct_pack_format(len(data)), *data)
+            queue_copy.append(elem)
+    for elem in queue_copy:
+        q.put(elem)
+    for elem in queue_copy:
+        print (elem)
+    print "Printing end."
+
+
+def extract_queue_and_encode(self):
+
+    # Part 1: Extracting all elements from queue to "queue_copy"
+    queue_copy = []
+    i = 0
+    while True:
+        try:
+            elem = self.get(block=False)
+        except:
+            break
+        else:
+            queue_copy.append(elem)
+            print elem
+        i = i + 1
+        # to put a boundary on how many elements to pop
+        # if i == 8:
+        #    break
+
+    # Part 2: Encoding elements in "queue_copy" and return a python "struct" object
+    N = len(queue_copy)
+    data = []
+
+    fmt_string = "u8"   # number of readings bundled together is assumed to be in range 0-255, hence 8 bits
+    data.append(N)
+
+    fmt_string += "f32"  # initial timestamp
+    data.append(queue_copy[0][2])
+
+    # append the event ids
+    for queue_elem in queue_copy:
+        fmt_string += "u4"   # we have provision for maximum 16 sensors, hence 4 bits
+        event_id = queue_elem[0]
+        data.append(event_id)
+
+    # append the sensor values
+    for queue_elem in queue_copy:
+        id = queue_elem[0]
+        fmt_string += str(c["event"][id]["dtype"]) + str(c["event"][id]["size"])
+        data.append(queue_elem[1])
+
+    # append the timestamp offsets
+    for queue_elem in queue_copy:
+        id = queue_elem[0]
+        time_actual = queue_elem[2]
+        time_offset = int((time_actual - queue_copy[0][2])*10000)
+        print (time_actual - queue_copy[0][2])
+        print (time_offset)
+        fmt_string += "u16"
+        data.append(time_offset)
+    packed = pack(fmt_string, *data)
     return packed
 
 
-# do something with the elements
 
+
+# Uploading Functions
+#---------------------
+          
 def upload_a_bundle():
     try:
-        pack1  = collect_and_encode_multiple()
-        b = bytearray(pack1)
-        # time = bb[0]
-        # ch4 = bb[1]
-        # lpg = bb[2]
-        # co2 = bb[3]
-        # dust = bb[4]
-        # temp = bb[5]
-        # humidity = bb[6]
-        # lat = bb[7]
-        # long = bb[8]
-        # cng = bb[9]
+        packed = extract_queue_and_encode(CircuitsApp.readings_queue)
 
-        if (mqtt.publish_packet(b) == False):
-            # traceback.print_exc()
-            bb = (unpack('ifffffffff', pack1))
-            strnew = "missing\t"
-            for i in range(0, 10):
-                strnew = strnew + str(bb[i]) + "\t"
-            log.log(45, strnew)
+        if (publish_packet_raw(bytearray(packed)) == False):
+            traceback.print_exc()
+            newFileBytes = bytearray(packed)
+            # make file
+            with open('missing.bin','a') as newFile:
+                newFile.write(newFileBytes)
+                newFile.write("\n")            
+            print(EventReport("Missing", "publish failure recorded."))
     except:
         traceback.print_exc()
-        print(EventReport("Error", time.time(), "upload_a_bundle failed."))
+        print(EventReport("Error", "upload_a_bundle failed."))
+
+
+def publish_packet_raw(message):
+    try:
+        msgs = [{'topic': "paho/test/iotBUET/bulk_raw/", 'payload': message},
+                ("paho/test/multiple", "multiple 2", 0, False)]
+        pub.multiple(msgs, hostname=HOST_ECLIPSE)
+        return True
+
+    except gaierror:
+        print(EventReport("Error", "MQTT publish failed."))
+        return False
+
 
 ###############################
 # statistics &OS command codes #
@@ -203,14 +263,6 @@ def time_of_now():
 """
 Main Program
 """
-
-
-def blocking_sense():
-    # print(time_of_now(), "blocking sensing start")
-    ### we can put any blocking codes here
-    # print("blocking sense done")
-    return 0
-
 
 class SensorHandler(Component):
     _worker = Worker(process=True)
@@ -277,11 +329,15 @@ class Sensor:
         self.period = period
 
 
+
+
 class EventReport:
-    def __init__(self, name, time, msg):
+    def __init__(self, name, msg):
         self.name = name
-        self.time = time
+        self.time = time.time()
         self.msg = msg
+        if self.name == "Error":
+            log.error(self.msg)
 
     def __repr__(self):
         return ('%s \t %-14s \t %s') % (self.get_time_str(self.time), self.name, self.msg)
@@ -315,12 +371,12 @@ class UploadHandler(Component):
     @handler("UploadEvent", priority=120)
     def upload_event(self, event):
         ustart = time_of_now()
-        print(EventReport("UploadEvent", time.time(), "started"))
+        print(EventReport("UploadEvent", "started"))
         yield self.call(task(upload_a_bundle), self._worker)
         ###log.log(45, "Before upload BYTES\t" + str(get_tx_bytes()))
         # yield self.call(task(upload_a_packet), self._worker)
         ###log.log(45, "After upload BYTES\t" + str(get_tx_bytes()))
-        print(EventReport("UploadEvent", time.time(), "ENDED (started at " + str(ustart) + ")"))
+        print(EventReport("UploadEvent", "ENDED (started at " + str(ustart) + ")"))
         CircuitsApp.timers["upload"] = Timer(c["interval"]["upload"], UploadEvent(), persist=False).register(self)
 
 
@@ -338,32 +394,19 @@ class ReadHandler(Component):
     def read_event(self, *args, **kwargs):
         starttime = time.time()
         #print (time_of_now(), " :: ", args, kwargs)
-        print(EventReport("ReadEvent", time.time(), "started"))
+        print(EventReport("ReadEvent", "started"))
         yield self.read_and_queue(args[0])
         endtime = time.time()
 
         #print (endtime-starttime)
 
-def queue_print(q):
-    mycopy = []
-    while True:
-        try:
-            elem = q.get(block=False)
-        except:
-            break
-        else:
-            mycopy.append(elem)
-    for elem in mycopy:
-        q.put(elem)
-    for elem in mycopy:
-        print (elem)
 
 class SenseHandler(Component):
     _worker = Worker(process=True)
     @handler("SenseEvent", priority=100)
     def sense_event(self, *args, **kwargs):
         "hello, I got an event"
-        print (EventReport("SenseEvent", time.time(), (str(args) + ", " + str(kwargs))))
+        print (EventReport("SenseEvent", (str(args) + ", " + str(kwargs))))
         CircuitsApp.timers["sense"] = Timer(args[0].period, SenseEvent(args[0]),  persist=False).register(self)
         self.fire(ReadEvent(args[0]))
 
@@ -374,8 +417,7 @@ class App(Component):
     h1 = SenseHandler()
     h2 = UploadHandler()
     h3 = ReadHandler()
-
-    # reconnect(TX_MEDIUM)
+    
     sensors = []
     readings_queue = Queue.Queue()
     read_queue = 0
@@ -391,16 +433,14 @@ class App(Component):
     def init_scene(self):
         print ("init scene")
         self.sensors = []
-        num_sensors = len(c["sensors"])
+        num_sensors = len(s["sensors"])
         for i in range(0, num_sensors):
-            s1 = Sensor(c["sensors"][i]["name"], c["sensors"][i]["readlatency"], c["sensors"][i]["period"],
-                               c["sensors"][i]["size"], c["sensors"][i]["gamma"], c["sensors"][i]["analogpin"])
+            s1 = Sensor(s["sensors"][i]["name"], s["sensors"][i]["readlatency"], c["sensors"][i]["period"], s["sensors"][i]["id"])
             self.sensors.append(s1)
 
-        self.set_endtime(c["interval"]["M"])
-        self.bought_data = c["params"]["D"]
+        self.set_endtime(s["interval"]["M"])
+        self.bought_data = s["params"]["D"]
 
-        rate = 1.0 * self.bought_data / c["interval"]["M"]
 
         print (self.sensors )
 
@@ -451,15 +491,10 @@ class App(Component):
                 print(time_of_now(), "Started => Running")
                 print(get_tx_bytes())
                 log.log(45, "START_BYTES\t" + str(get_tx_bytes()))
-                #self.fire(Event.create("sense_event"))
-                #self.timer = Timer(SENSE_INTERVAL, Event.create("sense_event"), persist=True).register(self)
-                #Timer(RUNTIME, Event.create("exit_event"), persist=False).register(self)
                 break
             except gaierror:
-                log.error("Failure connecting to MQTT controller")
-                print("FAILED")
-                # reconnect(TX_MEDIUM)
-            time.sleep(10)
+                print(EventReport("Error", "Failure connecting to MQTT controller"))
+            time.sleep(TIMEOUT_MQTT_RETRY)
         self.init_scene()
 
 
