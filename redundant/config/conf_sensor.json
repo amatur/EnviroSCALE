@@ -1,0 +1,48 @@
+{
+  "sensors": [
+    {
+      "name": "dht11",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "id": 1
+    },
+    {
+      "name": "mq4",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "id": 6,
+      "calib": 2
+    },
+    {
+      "name": "mq6",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "id": 7,
+      "calib": 3
+    },
+    {
+      "name": "mq135",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "id": 8,
+      "calib": 4
+    },
+    {
+      "name": "dust",
+      "readlatency": 0.6,
+      "period": 8.0,
+      "id": 5
+    }
+  ],
+  "params": {
+    "alpha": 800,
+    "beta": 1,
+    "lambda": 0.005,
+    "D": 100000
+  },
+  "interval": {
+    "period_update": 100,
+    "M": 1000,
+    "upload": 10
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "TX_MEDIUM": "wlan0",
+  "MQTT_BROKER_HOSTNAME": "iot.eclipse.org",
+  "RUNTIME": 86400
+}
