@@ -5,7 +5,7 @@ import sys
 ###@PI
 # from sensors.gps.gps import GPS
 
-USBi = 0
+USBi = 1
 while True:
     try:
         time.sleep(1)
@@ -25,10 +25,7 @@ while True:
 # gps = GPS()
 
 def read_arduino(choice):
-    if choice==1:
-        return 0,0
-
-    return 0
+    
     # arduino.reset_input_buffer()
     # arduino.reset_output_buffer()
     time.sleep(0.1)

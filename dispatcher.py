@@ -163,10 +163,10 @@ def queue_print(q):
 
 def decode_bitstruct(packed_bytes, c):
 
-    fmt_decode = "u8"    # how many readings ahead 8 bits unsigned, initial timestamp 32 bits float
+    fmt_decode = "=u8"    # how many readings ahead 8 bits unsigned, initial timestamp 32 bits float
     N = unpack(fmt_decode, packed_bytes)[0]
-    print(N)
-    fmt_decode += "f32"
+    print("IDDD", N)
+    fmt_decode += "u32"
     # initial_time = unpack(fmt_decode, packed_bytes)[1]
 
     # each id is 4 bits
@@ -211,10 +211,10 @@ def extract_queue_and_encode(q):
     N = len(queue_copy)
     data = []
 
-    fmt_string = "u8"  # number of readings bundled together is assumed to be in range 0-255, hence 8 bits
+    fmt_string = "=u8"  # number of readings bundled together is assumed to be in range 0-255, hence 8 bits
     data.append(N)
 
-    fmt_string += "f32"  # initial timestamp
+    fmt_string += "u32"  # initial timestamp
     data.append(queue_copy[0][2])
 
     # append the event ids
@@ -233,7 +233,7 @@ def extract_queue_and_encode(q):
     for queue_elem in queue_copy:
         id = queue_elem[0]
         time_actual = queue_elem[2]
-        time_offset = int((time_actual - queue_copy[0][2]) * 10000)
+        time_offset = int((time_actual - queue_copy[0][2]))
         # print(time_actual - queue_copy[0][2])
         # print(time_offset)
         fmt_string += "u16"
@@ -285,7 +285,7 @@ def publish_packet_raw(message):
 class EventReport:
     def __init__(self, name, msg):
         self.name = name
-        self.time = time.time()
+        self.time = (time.time())
         self.msg = msg
         if self.name == "Error":
             log.error(self.msg)
@@ -327,7 +327,7 @@ class Reading:
 
         #return str(self.event_id)
     def tuple(self):
-        return (self.event_id, self.value, self.time)
+        return (self.event_id, self.value, int(self.time))
 
 
 # Events
@@ -360,15 +360,13 @@ class UploadHandler(Component):
 class ReadHandler(Component):
     def read_and_queue(self, sensor, readings_queue):
         value = read_arduino(sensor.pin)
-        time_of_read = time.time()
+        time_of_read = (time.time())
         sensor_name = c["sensor"][sensor.id]["name"]
 
         if sensor_name == "dht11":
             reading = Reading(map_event_to_id["temperature"], value[0], time_of_read)
-            print (reading)
             readings_queue.put(reading.tuple())
             reading = Reading(map_event_to_id["humidity"], value[1], time_of_read)
-            print(reading)
             readings_queue.put(reading.tuple())
         else:
             sensor_to_event = {"mq4": "methane", "mq6": "lpg", "mq135": "co2", "dust": "dust"}
