@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 from __future__ import print_function
+import gps.gpsdaemon
 import traceback
 import Queue
 import paho.mqtt.client as mqttc
@@ -69,7 +70,7 @@ d = {
         {
             "name": "dht11",
             "readlatency": 0.6,
-            "period": 8.0,
+            "period": 4.0,
             "pin": 1
         },
         {
@@ -96,7 +97,7 @@ d = {
         {
             "name": "dust",
             "readlatency": 0.6,
-            "period": 8.0,
+            "period": 4.0,
             "pin": 5
         }
     ],
@@ -109,7 +110,7 @@ d = {
     "interval": {
         "period_update": 100,
         "M": 1000,
-        "upload": 10
+        "upload": 30
     },
     "tx_medium": "wlan0",
     "mqtt_broker_host": "iqueue.ics.uci.edu"
@@ -138,7 +139,7 @@ TIMEOUT_MQTT_RETRY = 10
 setup_logging()
 log = logging.getLogger("<Dispatcher>")
 #logging.disable(logging.CRITICAL)  # uncomment this to disable all logging
-
+logging.disable(logging.INFO)
 
 # Queue Related
 # --------------
@@ -161,6 +162,7 @@ def queue_print(q):
     "Printing end."
 
 
+#need to be updated to decode geotag
 def decode_bitstruct(packed_bytes, c):
 
     fmt_decode = "=u8"    # how many readings ahead 8 bits unsigned, initial timestamp 32 bits float
@@ -238,9 +240,15 @@ def extract_queue_and_encode(q):
         # print(time_offset)
         fmt_string += "u16"
         data.append(time_offset)
+    
+    for queue_elem in queue_copy:
+        fmt_string += "f32f32f32"
+        data.append(queue_elem[3])
+        data.append(queue_elem[4])
+        data.append(queue_elem[5])    
     packed = pack(fmt_string, *data)
-    unpacked = decode_bitstruct(packed, c)
-    print("PACCCCCCCCCCC", unpacked)
+    #unpacked = decode_bitstruct(packed, c)
+    #print("PACCCCCCCCCCC", unpacked)
     return packed
 
 
@@ -327,7 +335,8 @@ class Reading:
 
         #return str(self.event_id)
     def tuple(self):
-        return (self.event_id, self.value, int(self.time))
+	lat, lon, alt = gps.gpsdaemon.read()
+        return (self.event_id, self.value, int(self.time), lat, lon, alt)
 
 
 # Events
@@ -372,6 +381,10 @@ class ReadHandler(Component):
             sensor_to_event = {"mq4": "methane", "mq6": "lpg", "mq135": "co2", "dust": "dust"}
             reading = Reading(map_event_to_id[sensor_to_event[sensor_name]], value, time_of_read)
             readings_queue.put(reading.tuple())
+       	    if sensor_name == "dust":
+	        print ("DUSTTTT", reading)
+	print (reading)
+
 
 
 
