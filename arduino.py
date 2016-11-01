@@ -1,11 +1,21 @@
 import serial, time
 import csv
 import sys
-
+import traceback 
+import os
 ###@PI
 # from sensors.gps.gps import GPS
 
-USBi = 1
+USBi = 5
+try:
+    astring = 'bash shellscripts/arduinotty.sh'
+    USBi = int(os.popen(astring).read())
+except:
+    print "error in reading script"
+    traceback.print_exc()
+print USBi
+
+
 while True:
     try:
         time.sleep(1)
@@ -26,8 +36,8 @@ while True:
 
 def read_arduino(choice):
     
-    # arduino.reset_input_buffer()
-    # arduino.reset_output_buffer()
+    #arduino.reset_input_buffer()
+    #arduino.reset_output_buffer()
     time.sleep(0.1)
     arduino.write(str(choice) + "\n")
     #time.sleep(3)
