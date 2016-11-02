@@ -8,7 +8,7 @@ import os
 
 USBi = 5
 try:
-    astring = 'bash shellscripts/arduinotty.sh'
+    astring = 'bash /home/pi/EnviroSCALE/shellscripts/arduinotty.sh'
     USBi = int(os.popen(astring).read())
 except:
     print "error in reading script"
@@ -43,7 +43,7 @@ def read_arduino(choice):
     #time.sleep(3)
     while True:
         #print "whil1 1"
-        time.sleep(0.1)
+        time.sleep(0.9)
 
         data = arduino.readline()[:-2]
         #print "data is ", data

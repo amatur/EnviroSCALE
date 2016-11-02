@@ -27,3 +27,89 @@
 2016-11-01 06:06:38,023 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
 2016-11-01 15:47:41,987 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
 2016-11-01 15:48:13,394 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 22:49:23,155 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 22:49:54,850 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 22:50:24,828 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 23:21:06,778 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 23:21:18,950 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 23:21:31,621 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-01 23:27:07,640 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:00:30,106 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:01:06,719 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:01:15,882 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:01:25,669 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:01:34,690 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:01:48,110 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:03:53,122 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:04:06,803 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:04:21,102 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:04:48,110 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:05:00,806 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:05:13,721 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:05:27,088 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:05:40,651 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:06:12,653 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:06:25,653 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:06:39,097 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:06:51,819 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:07:04,718 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:07:18,101 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:08:00,113 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:11:24,086 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:11:36,784 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:11:49,658 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:12:03,076 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:12:15,780 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:12:28,678 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:12:42,087 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 00:24:09,790 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:24:22,673 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:24:36,091 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:38:27,862 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:38:36,841 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:45:12,860 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:45:21,831 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 00:45:34,715 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 01:10:06,911 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 01:10:19,753 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 01:44:57,147 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 01:45:09,789 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 01:46:18,118 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 02:43:10,495 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 02:43:26,897 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 02:43:46,013 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 02:43:56,903 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 02:44:06,031 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 04:05:53,893 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:19:14,164 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:31:17,146 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:32:23,870 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:37:17,193 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:37:32,177 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 04:44:26,178 	 <Dispatcher> 	 ERROR 	 MQTT publish failed.
+2016-11-02 04:58:11,154 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 05:29:38,898 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 05:34:05,201 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 05:35:11,256 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 05:44:08,210 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 05:57:59,215 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:11:14,901 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:14:02,180 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:15:41,155 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:16:32,157 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:17:05,157 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:17:21,067 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:17:35,173 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 06:21:35,152 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:10:06,004 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:11:47,147 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:14:11,114 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:24:14,832 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:24:29,149 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:30:29,846 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:32:05,120 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:32:50,149 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:33:06,014 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 07:33:23,138 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 08:01:47,124 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.
+2016-11-02 08:02:02,847 	 <Dispatcher> 	 ERROR 	 upload_a_bundle failed.

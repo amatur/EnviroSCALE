@@ -30,7 +30,7 @@ d = {
     "event":
         [
             {"name": "temperature",
-             "size": 8,
+             "size": 10,
              "dtype": 's',
              "sensor": "dht11"
              },
@@ -70,20 +70,20 @@ d = {
         {
             "name": "dht11",
             "readlatency": 0.6,
-            "period": 20.0,
+            "period": 8.0,
             "pin": 1
         },
         {
             "name": "mq4",
             "readlatency": 0.6,
-            "period": 6.0,
+            "period": 4.0,
             "pin": 6,
             "calib": 2
         },
         {
             "name": "mq6",
             "readlatency": 0.6,
-            "period": 12.0,
+            "period": 4.0,
             "pin": 7,
             "calib": 3
         },
@@ -97,7 +97,7 @@ d = {
         {
             "name": "dust",
             "readlatency": 0.6,
-            "period": 12.0,
+            "period": 10.0,
             "pin": 5
         }
     ],
@@ -110,7 +110,7 @@ d = {
     "interval": {
         "period_update": 100,
         "M": 1000,
-        "upload": 30
+        "upload": 8
     },
     "tx_medium": "wlan0",
     "mqtt_broker_host": "iqueue.ics.uci.edu"
