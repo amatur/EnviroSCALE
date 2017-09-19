@@ -38,12 +38,12 @@ def read_arduino(choice):
     
     #arduino.reset_input_buffer()
     #arduino.reset_output_buffer()
-    time.sleep(0.1)
+    time.sleep(3)
     arduino.write(str(choice) + "\n")
     #time.sleep(3)
     while True:
         #print "whil1 1"
-        time.sleep(0.9)
+        time.sleep(2)
 
         data = arduino.readline()[:-2]
         #print "data is ", data
